@@ -12,21 +12,21 @@ class KNN:
     def __init__(self,k=3):
         self.k = k 
 
-    def fit(self,X_train, y_train):
-        self.X_train = X_train
-        self.y_train = y_train
+    def fit(self,X1_train, Y1_train):
+        self.X1_train = X1_train
+        self.Y1_train = Y1_train
 
-    def predict(self,X_test):
-        predicted_labels = [self._predict(x)[0]for x in X_test]
+    def predict(self,X1_test):
+        predicted_labels = [self._predict(x)[0]for x in X1_test]
         
         return np.array(predicted_labels)
 
-    def _predict(self,x):
+    def _predict(self,X):
         # compute the distances
-        distances = [euclidean_distance(x, x_train) for x_train in self.X_train]
+        distances = [euclidean_distance(X, X_train) for X_train in self.X1_train]
         # get k nearest samples, lables
         k_indices = np.argsort(distances)[:self.k]
-        k_nearest_labels = [self.y_train[i] for i in k_indices]
+        k_nearest_labels = [self.Y1_train[i] for i in k_indices]
         # major vote, most common class labels 
         most_common = Counter(k_nearest_labels).most_common(1)
         return most_common[0][0]
@@ -52,25 +52,25 @@ def load(path,kind = '%s'):
         images = np.fromfile(imgpath,dtype = np.uint8).reshape(len(labels),784)
 
     return images,labels 
-def binary(X_train):
-    row = X_train.shape[0]
-    col = X_train.shape[1]
+def binary(X1_train):
+    row = X1_train.shape[0]
+    col = X1_train.shape[1]
 
     for i in range(row):
         for j in range(col):
-            if(X_train[i][j]>127):
-                X_train[i][j] = 1
-            else: X_train[i][j] = 0
-    return X_train
+            if(X1_train[i][j]>127):
+                X1_train[i][j] = 1
+            else: X1_train[i][j] = 0
+    return X1_train
 
-X_train,y_train = load("/Users/yanchenhao/Desktop/MNIST1","train")
-X_test ,y_test  = load("/Users/yanchenhao/Desktop/MNIST1","t10k")
-X_train1 =  binary(X_train)
-X_test1  =  binary(X_test)
+X1_train,Y1_train = load("/Users/liujing/Desktop/MNIST1","train")
+X1_test ,Y1_test  = load("/Users/liujing/Desktop/MNIST1","t10k")
+X1_train1 =  binary(X1_train)
+X1_test1  =  binary(X1_test)
 
 from knn import KNN 
 clf = KNN(k=5)
-clf.fit(X_train1,y_train)
-predictions,a = clf.predict(X_test1) 
-acc = np.sum(predictions == y_test) / len(y_test)
+clf.fit(X1_train1,Y1_train)
+predictions,a = clf.predict(X1_test1) 
+acc = np.sum(predictions == Y1_test) / len(Y1_test)
 print(acc)
